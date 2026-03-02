@@ -37,6 +37,18 @@ python3 -m http.server 8080
 
 > ⚠️ Tylko na wyraźne polecenie użytkownika.
 
+**Automatyczny deploy (GitHub Actions):**
+- Każdy `git push origin main` → automatyczny deploy na `sila32167.netlify.app`
+- GitHub repo: `https://github.com/maaciej32167/sila`
+- Workflow: `.github/workflows/deploy.yml`
+
+```bash
+git add -p          # staging zmian
+git commit -m "..."
+git push            # deploy startuje automatycznie
+```
+
+**Ręczny deploy (awaryjny):**
 ```bash
 ~/.npm-global/bin/netlify deploy --prod --dir=.
 ```
