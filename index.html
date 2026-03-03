@@ -451,6 +451,17 @@
 </section>
 
 
+    <!-- HISTORY: PR TIMELINE -->
+    <section id="page-history-prs" style="display:none">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px">
+          <button class="miniBtn" data-nav="history">← Wróć</button>
+        </div>
+        <h2 style="margin:0 0 10px">🏅 Oś czasu PR</h2>
+        <div id="prTimelineList"></div>
+      </div>
+    </section>
+
     <!-- HISTORY: TRAINING DAY DETAILS -->
     <section id="page-history-day" style="display:none">
       <div class="card">
@@ -578,16 +589,6 @@
       </div>
     </section>
 
-    <!-- HISTORY: PR TIMELINE -->
-    <section id=”page-history-prs” style=”display:none”>
-      <div class=”card”>
-        <div style=”display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px”>
-          <button class=”miniBtn” data-nav=”history”>← Wróć</button>
-        </div>
-        <h2 style=”margin:0 0 10px”>🏅 Oś czasu PR</h2>
-        <div id=”prTimelineList”></div>
-      </div>
-    </section>
 
     <!-- MANAGE -->
     <section id="page-manage" style="display:none">
@@ -841,6 +842,7 @@ function setPage(next){
     if($("page-history-all")) $("page-history-all").style.display = showAll ? "" : "none";
     if($("page-history-day")) $("page-history-day").style.display = showDay ? "" : "none";
     if($("page-history-prs")) $("page-history-prs").style.display = showPrs ? "" : "none";
+
   }else{
     const el = $("page-"+next);
     if(el) el.style.display = "";
@@ -1392,6 +1394,7 @@ function getBestDayOfWeek(){
   }
   return best >= 0 ? { name: names[best], avg: Math.round(bestAvg) } : null;
 }
+
 
 /* ===== HISTORY: PR Timeline ===== */
 function getPRTimeline(){
@@ -1994,6 +1997,7 @@ function renderAll(){
   if(page==="history" && historySub==="ex") renderHistoryExercise();
   if(page==="history" && historySub==="all") renderHistoryAll();
   if(page==="history" && historySub==="prs") renderHistoryPRs();
+
   if(page==="manage") renderManage();
   if(page==="info") renderInfo();
   if(page==="backup") renderBackup();
