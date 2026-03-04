@@ -745,7 +745,7 @@ const BACKUP_TS_KEY = "sila_last_backup_ts";
 const BACKUP_REMINDER_EVERY = 20;
 
 // Domyślne BW ćwiczenia (gdy brak w localStorage)
-const DEFAULT_BW_EX = ["Pull Up", "Chin Up", "Dipy"];
+const DEFAULT_BW_EX = ["Pull Up", "Neutral Grip Pull Up", "Chin Up", "Dipy"];
 let BODYWEIGHT_EX = new Set(DEFAULT_BW_EX);
 
 const DEFAULT_EXERCISES = [
@@ -1313,7 +1313,8 @@ function get1RMTrend30(ex){
 function getDaysSinceEx(ex){
   const recs = records.filter(r => r.exercise === ex && n(r.timestamp) > 0);
   if(!recs.length) return null;
-  return Math.floor((now() - Math.max(...recs.map(r => n(r.timestamp)))) / msDays(1));
+  const lastDayTs = Math.max(...recs.map(r => startOfDayTs(n(r.timestamp))));
+  return Math.round((startOfDayTs(now()) - lastDayTs) / msDays(1));
 }
 
 function getExFrequency(ex){
@@ -2042,6 +2043,25 @@ function load(){
   bodyWeightKg = latest && n(latest.bodyWeightKg)>0 ? n(latest.bodyWeightKg) : bwFixed;
 
   selectedExercise = (lastEx && exercises.includes(lastEx)) ? lastEx : (exercises[0] || "");
+
+  // Jednorazowa migracja: Pull Up → Neutral Grip Pull Up + dodaj nowy Pull Up
+  if(!sGet("sila_mig_pullup_v1")){
+    const oldIdx = exercises.findIndex(e => e.toLowerCase() === "pull up");
+    if(oldIdx !== -1){
+      const oldName = exercises[oldIdx];
+      exercises[oldIdx] = "Neutral Grip Pull Up";
+      records.forEach(r => { if(r.exercise === oldName) r.exercise = "Neutral Grip Pull Up"; });
+    }
+    if(!exercises.includes("Pull Up")) exercises.push("Pull Up");
+    BODYWEIGHT_EX.add("Pull Up");
+    BODYWEIGHT_EX.add("Neutral Grip Pull Up");
+    sSet("sila_exercises", JSON.stringify(exercises));
+    sSet("sila_records", JSON.stringify(records));
+    sSet(BW_EX_KEY, JSON.stringify(Array.from(BODYWEIGHT_EX)));
+    sSet("sila_mig_pullup_v1", "1");
+    if(selectedExercise === "" || !exercises.includes(selectedExercise))
+      selectedExercise = exercises[0] || "";
+  }
 }
 
 function getProtectedIds(){
